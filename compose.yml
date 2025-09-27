@@ -1,5 +1,5 @@
 ---
-version: "3"
+version: "3.8"
 
 services:
   mysql-db:
@@ -8,23 +8,32 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: digital_library
+      MYSQL_USER: digitaluser
+      MYSQL_PASSWORD: digitalpass
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./digital_library.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - digitalbook-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
-  discovery-service:
-    build: ./discovery-service
-    container_name: discovery-service
+  discovery-server:
+    build: ./discovery-server
+    container_name: discovery-server
     ports:
       - "8761:8761"
     networks:
       - digitalbook-network
     depends_on:
-      - mysql-db
+      mysql-db:
+        condition: service_healthy
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
 
   api-gateway:
     build: ./api-gateway
@@ -34,9 +43,10 @@ services:
     networks:
       - digitalbook-network
     depends_on:
-      - discovery-service
-      - user-service
-      - catalog-service
+      - discovery-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker
 
   user-service:
     build: ./user-service
@@ -46,8 +56,15 @@ services:
     networks:
       - digitalbook-network
     depends_on:
-      - discovery-service
+      - discovery-server
       - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/digital_library?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=password
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+      - JWT_SECRET=digitalBookSecretKey2024
+      - JWT_EXPIRATION=86400000
 
   catalog-service:
     build: ./catalog-service
@@ -57,8 +74,13 @@ services:
     networks:
       - digitalbook-network
     depends_on:
-      - discovery-service
+      - discovery-server
       - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/digital_library?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=password
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
 
   borrowing-service:
     build: ./borrowing-service
@@ -68,8 +90,13 @@ services:
     networks:
       - digitalbook-network
     depends_on:
-      - discovery-service
+      - discovery-server
       - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/digital_library?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=password
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
 
   recommendation-service:
     build: ./recommendation-service
@@ -79,8 +106,13 @@ services:
     networks:
       - digitalbook-network
     depends_on:
-      - discovery-service
+      - discovery-server
       - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/digital_library?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=password
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
 
 volumes:
   mysql_data:
