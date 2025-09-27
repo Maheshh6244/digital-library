@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigitalBook - Microservices Library</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base Styles */
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4bb543;
+            --warning: #ffcc00;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            font-size: 2.2rem;
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .logo span {
+            color: var(--accent);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 25px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        nav ul li a:hover {
+            color: var(--accent);
+        }
+        
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--accent);
+            transition: width 0.3s;
+        }
+        
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 8px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+        
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #3aa8d0;
+            transform: translateY(-2px);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(67, 97, 238, 0.9), rgba(58, 12, 163, 0.9)), 
+                        url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 100px 0;
+            color: white;
+            text-align: center;
+        }
+        
+        .hero-content h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .search-bar {
+            max-width: 600px;
+            margin: 30px auto;
+            display: flex;
+            background: white;
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-bar input {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .search-bar button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .search-bar button:hover {
+            background: #3aa8d0;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+        
+        .section-title p {
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            text-align: center;
+            border-top: 4px solid var(--primary);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        /* Books Section */
+        .books {
+            padding: 80px 0;
+            background-color: var(--light);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .filter-options {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .filter-select {
+            padding: 8px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            background: white;
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        .book-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .book-cover {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .book-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .book-info {
+            padding: 15px;
+        }
+        
+        .book-info h3 {
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+        
+        .book-author {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .book-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+        
+        .book-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+        
+        /* Microservices Section */
+        .microservices {
+            padding: 80px 0;
+            background-color: white;
+        }
+        
+        .services-diagram {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .service-node {
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            width: 180px;
+            position: absolute;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .service-node h4 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .service-node p {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .service-node.core {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--primary);
+            color: white;
+            width: 200px;
+        }
+        
+        .service-node.core h4 {
+            color: white;
+        }
+        
+        .service-node.user {
+            top: 20%;
+            left: 20%;
+        }
+        
+        .service-node.catalog {
+            top: 20%;
+            right: 20%;
+        }
+        
+        .service-node.borrowing {
+            bottom: 20%;
+            left: 20%;
+        }
+        
+        .service-node.recommendation {
+            bottom: 20%;
+            right: 20%;
+        }
+        
+        .connector {
+            position: absolute;
+            background: var(--light-gray);
+            height: 2px;
+            transform-origin: left;
+        }
+        
+        /* Authentication Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 450px;
+            padding: 30px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h3 {
+            color: var(--dark);
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .form-options a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .form-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--accent);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        
+        .social-links a:hover {
+            background: var(--accent);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            nav ul li {
+                margin: 0 10px 10px;
+            }
+            
+            .auth-buttons {
+                margin-top: 15px;
+            }
+            
+            .hero-content h2 {
+                font-size: 2.2rem;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .service-node {
+                position: static;
+                margin-bottom: 20px;
+                width: 100%;
+            }
+            
+            .services-diagram {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero {
+                padding: 60px 0;
+            }
+            
+            .hero-content h2 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .search-bar {
+                flex-direction: column;
+                border-radius: 8px;
+            }
+            
+            .search-bar input {
+                border-radius: 8px 8px 0 0;
+            }
+            
+            .search-bar button {
+                border-radius: 0 0 8px 8px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <h1>Digital<span>Book</span></h1>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#books">Books</a></li>
+                        <li><a href="#microservices">Architecture</a></li>
+                        <li><a href="#about">About</a></li>
+                    </ul>
+                </nav>
+                <div class="auth-buttons">
+                    <a href="#" class="btn btn-outline" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="#" class="btn btn-primary" id="registerBtn">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Discover Your Next Favorite Book</h2>
+                <p>Access thousands of digital books with our microservices-based library platform. Read anytime, anywhere.</p>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for books, authors, or categories...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <a href="#books" class="btn btn-primary">Browse Collection</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Platform Features</h2>
+                <p>Our microservices architecture ensures a seamless and scalable reading experience</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book-reader"></i>
+                    </div>
+                    <h3>Extensive Catalog</h3>
+                    <p>Access thousands of books across multiple genres with our catalog microservice.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>User Management</h3>
+                    <p>Secure user accounts with personalized reading history and preferences.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3>Borrowing System</h3>
+                    <p>Easy book borrowing and return process with automated due date tracking.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Smart Recommendations</h3>
+                    <p>Get personalized book suggestions based on your reading history and preferences.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Books Section -->
+    <section class="books" id="books">
+        <div class="container">
+            <div class="section-title">
+                <h2>Featured Books</h2>
+                <p>Explore our curated collection of popular and recent additions</p>
+            </div>
+            <div class="section-header">
+                <h3>Popular This Week</h3>
+                <div class="filter-options">
+                    <select class="filter-select">
+                        <option>All Genres</option>
+                        <option>Fiction</option>
+                        <option>Non-Fiction</option>
+                        <option>Science</option>
+                        <option>Technology</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>Sort by Popularity</option>
+                        <option>Newest First</option>
+                        <option>Title A-Z</option>
+                    </select>
+                </div>
+            </div>
+            <div class="books-grid">
+                <!-- Book cards will be dynamically populated -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Microservices Section -->
+    <section class="microservices" id="microservices">
+        <div class="container">
+            <div class="section-title">
+                <h2>Microservices Architecture</h2>
+                <p>Our platform is built using a modern microservices approach for scalability and reliability</p>
+            </div>
+            <div class="services-diagram">
+                <div class="service-node core">
+                    <h4>API Gateway</h4>
+                    <p>Single entry point for all client requests</p>
+                </div>
+                <div class="service-node user">
+                    <h4>User Service</h4>
+                    <p>Manages authentication and user profiles</p>
+                </div>
+                <div class="service-node catalog">
+                    <h4>Catalog Service</h4>
+                    <p>Handles book inventory and search</p>
+                </div>
+                <div class="service-node borrowing">
+                    <h4>Borrowing Service</h4>
+                    <p>Manages book loans and returns</p>
+                </div>
+                <div class="service-node recommendation">
+                    <h4>Recommendation Service</h4>
+                    <p>Provides personalized suggestions</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Login to Your Account</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <div class="form-options">
+                    <label>
+                        <input type="checkbox"> Remember me
+                    </label>
+                    <a href="#">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+            <div class="form-footer">
+                <p>Don't have an account? <a href="#" id="switchToRegister">Register here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Account</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email Address</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerConfirm">Confirm Password</label>
+                    <input type="password" id="registerConfirm" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+            </form>
+            <div class="form-footer">
+                <p>Already have an account? <a href="#" id="switchToLogin">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>DigitalBook</h3>
+                    <p>A modern digital library platform built with microservices architecture.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#books">Books</a></li>
+                        <li><a href="#microservices">Architecture</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="#">User Management</a></li>
+                        <li><a href="#">Book Catalog</a></li>
+                        <li><a href="#">Borrowing System</a></li>
+                        <li><a href="#">Recommendations</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Library Street, Bookville</li>
+                        <li><i class="fas fa-phone"></i> (555) 123-4567</li>
+                        <li><i class="fas fa-envelope"></i> info@digitalbook.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 DigitalBook Microservices Library. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample book data
+        const books = [
+            {
+                id: 1,
+                title: "The Silent Patient",
+                author: "Alex Michaelides",
+                genre: "Thriller",
+                year: 2019,
+                cover: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                available: true
+            },
+            {
+                id: 2,
+                title: "Where the Crawdads Sing",
+                author: "Delia Owens",
+                genre: "Fiction",
+                year: 2018,
+                cover: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                available: true
+            },
+            {
+                id: 3,
+                title: "Educated",
+                author: "Tara Westover",
+                genre: "Memoir",
+                year: 2018,
+                cover: "https://images.unsplash.com/photo-1551029506-0807df4e2031?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                available: false
+            },
+            {
+                id: 4,
+                title: "Becoming",
+                author: "Michelle Obama",
+                genre: "Autobiography",
+                year: 2018,
+                cover: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                available: true
+            },
+            {
+                id: 5,
+                title: "The Nightingale",
+                author: "Kristin Hannah",
+                genre: "Historical Fiction",
+                year: 2015,
+                cover: "https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                available: true
+            },
+            {
+                id: 6,
+                title: "Sapiens",
+                author: "Yuval Noah Harari",
+                genre: "Non-Fiction",
+                year: 2014,
+                cover: "https://images.unsplash.com/photo-1463320726281-696a485928c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+                available: true
+            }
+        ];
+
+        // DOM Elements
+        const booksGrid = document.querySelector('.books-grid');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        const closeModalButtons = document.querySelectorAll('.close-modal');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+
+        // Populate books grid
+        function renderBooks() {
+            booksGrid.innerHTML = '';
+            books.forEach(book => {
+                const bookCard = document.createElement('div');
+                bookCard.className = 'book-card';
+                bookCard.innerHTML = `
+                    <div class="book-cover">
+                        <img src="${book.cover}" alt="${book.title}">
+                    </div>
+                    <div class="book-info">
+                        <h3>${book.title}</h3>
+                        <div class="book-author">by ${book.author}</div>
+                        <div class="book-meta">
+                            <span>${book.genre}</span>
+                            <span>${book.year}</span>
+                        </div>
+                        <div class="book-actions">
+                            <button class="btn btn-primary btn-small ${!book.available ? 'disabled' : ''}" 
+                                    ${!book.available ? 'disabled' : ''}>
+                                <i class="fas fa-book"></i> ${book.available ? 'Borrow' : 'Unavailable'}
+                            </button>
+                            <button class="btn btn-outline btn-small">
+                                <i class="fas fa-heart"></i> Wishlist
+                            </button>
+                        </div>
+                    </div>
+                `;
+                booksGrid.appendChild(bookCard);
+            });
+        }
+
+        // Modal functions
+        function openModal(modal) {
+            modal.style.display = 'flex';
+        }
+
+        function closeModal(modal) {
+            modal.style.display = 'none';
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            renderBooks();
+            
+            // Navigation smooth scrolling
+            document.querySelectorAll('nav a').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    
+                    window.scrollTo({
+                        top: targetSection.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // Modal events
+            loginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal(loginModal);
+            });
+            
+            registerBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                openModal(registerModal);
+            });
+            
+            closeModalButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    closeModal(loginModal);
+                    closeModal(registerModal);
+                });
+            });
+            
+            switchToRegister.addEventListener('click', (e) => {
+                e.preventDefault();
+                closeModal(loginModal);
+                openModal(registerModal);
+            });
+            
+            switchToLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                closeModal(registerModal);
+                openModal(loginModal);
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === loginModal) {
+                    closeModal(loginModal);
+                }
+                if (e.target === registerModal) {
+                    closeModal(registerModal);
+                }
+            });
+            
+            // Form submissions
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Login functionality would be implemented with Java backend');
+                closeModal(loginModal);
+            });
+            
+            registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Registration functionality would be implemented with Java backend');
+                closeModal(registerModal);
+            });
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-bar input');
+            const searchButton = document.querySelector('.search-bar button');
+            
+            searchButton.addEventListener('click', () => {
+                alert(`Searching for: "${searchInput.value}" - This would call the Catalog Service API`);
+            });
+            
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    alert(`Searching for: "${searchInput.value}" - This would call the Catalog Service API`);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
