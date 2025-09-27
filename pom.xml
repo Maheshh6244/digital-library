@@ -33,7 +33,7 @@
     </properties>
 
     <modules>
-        <module>discovery-service</module>
+        <module>discovery-server</module>
         <module>api-gateway</module>
         <module>user-service</module>
         <module>catalog-service</module>
