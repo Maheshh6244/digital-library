@@ -1,6 +1,7 @@
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY target/borrowing-service-1.0.0.jar app.jar
-COPY . /app
+COPY pom.xml .
+RUN mvn install --no-cache-dir -r pom.xml
+COPY . .
 EXPOSE 8083
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "BorrowingController.java"]
